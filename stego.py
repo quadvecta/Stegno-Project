@@ -1,44 +1,64 @@
 import cv2
 import os
-import string
 
-img = cv2.imread("mypic.jpg") # Replace with the correct image path#image
 
-msg = input("Enter secret message:")
-password = input("Enter a passcode:")
+image_path = r"D:\Programming\VS Code\Python\image.jpg" # Make sure to change the file location!
 
-d = {}
-c = {}
+if not os.path.exists(image_path):
+    print("Error: Image file not found at", image_path)
+    exit()
 
-for i in range(255):
-    d[chr(i)] = i
-    c[i] = chr(i)
+img = cv2.imread(image_path)
 
-m = 0
+if img is None:
+    print("Error: Failed to load the image. Check file format or permissions.")
+    exit()
+
+msg = input("Enter secret message: ")
+password = input("Enter a passcode: ")
+
+d = {chr(i): i for i in range(256)} 
+c = {i: chr(i) for i in range(256)}
+
+height, width, _ = img.shape
+
 n = 0
+m = 0
 z = 0
+
+
+if len(msg) > height * width:
+    print("Error: Message too long to fit in the image.")
+    exit()
+
 
 for i in range(len(msg)):
     img[n, m, z] = d[msg[i]]
-    n = n + 1
-    m = m + 1
-    z = (z + 1) % 3
+    m += 1
+    if m >= width:  
+        m = 0
+        n += 1
+    z = (z + 1) % 3  
 
 cv2.imwrite("encryptedImage.jpg", img)
-os.system("start encryptedImage.jpg")  # Use 'start' to open the image on Windows
+os.system("start encryptedImage.jpg")  # Open image on Windows using "start"
+
 
 message = ""
 n = 0
 m = 0
 z = 0
 
-pas = input("Enter passcode for Decryption")
+pas = input("Enter passcode for decryption: ")
+
 if password == pas:
     for i in range(len(msg)):
-        message = message + c[img[n, m, z]]
-        n = n + 1
-        m = m + 1
+        message += c[img[n, m, z]]
+        m += 1
+        if m >= width:
+            m = 0
+            n += 1
         z = (z + 1) % 3
     print("Decryption message:", message)
 else:
-    print("YOU ARE NOT AUTH")
+    print("ERROR: Incorrect passcode. You are not authorized!")
