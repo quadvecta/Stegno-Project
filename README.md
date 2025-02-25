@@ -37,4 +37,4 @@ pip install opencv-python
 - `stego.py` – Python script for encoding/decoding messages in an image.  
 - The original image (not included in the repo).  
 - `encryptedImage.jpg` – The image with the hidden message.  
-- `report.pptx` – PowerPoint presentation explaining the project.  
+- `Steganography Project Report.pptx` – PowerPoint presentation explaining the project.  
