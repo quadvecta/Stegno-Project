@@ -1,7 +1,7 @@
 # **Image Steganography Project**  
 
-This project is part of an internship program where we modify and use a Python script to hide and extract secret messages within an image. The project includes:  
-- A modified `stego.py` script for steganography  
+A Python script to hide and extract secret messages within an image. The project includes:  
+- A `stego.py` script for steganography  
 - An encrypted output image (`encryptedImage.jpg`)   
 - A PowerPoint report (`ProjectStegno.pptx`) explaining the implementation  
 
