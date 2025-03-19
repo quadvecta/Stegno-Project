@@ -3,7 +3,6 @@
 A Python script to hide and extract secret messages within an image. The project includes:  
 - A `stego.py` script for steganography  
 - An encrypted output image (`encryptedImage.jpg`)   
-- A PowerPoint report (`ProjectStegno.pptx`) explaining the implementation  
 
 ## **Project Overview**  
 Steganography is the practice of hiding information within digital media. This project uses OpenCV to embed a secret message into an image by modifying pixel values.  
@@ -36,5 +35,4 @@ pip install opencv-python
 ## **Project Files**  
 - `stego.py` – Python script for encoding/decoding messages in an image.  
 - The original image (not included in the repo).  
-- `encryptedImage.jpg` – The image with the hidden message.  
-- `ProjectStegno.pptx` – PowerPoint presentation explaining the project.  
+- `encryptedImage.jpg` – The image with the hidden message.   
