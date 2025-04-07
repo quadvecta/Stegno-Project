@@ -1,38 +1,81 @@
-# **Image Steganography Project**  
 
-A Python script to hide and extract secret messages within an image. The project includes:  
-- A `stego.py` script for steganography  
-- An encrypted output image (`encryptedImage.jpg`)   
+# 🖼️ Image Steganography Project (v2.0 - GUI)
 
-## **Project Overview**  
-Steganography is the practice of hiding information within digital media. This project uses OpenCV to embed a secret message into an image by modifying pixel values.  
+[![Version](https://img.shields.io/badge/version-v2.1-blue.svg)](https://github.com/quadvecta/Stegno-Project/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-## **Requirements**  
-Ensure you have Python installed along with the required libraries:  
+A Python GUI application to **hide and extract secret messages** within an image using steganography and password protection. This upgraded version features an easy-to-use graphical interface built with Tkinter.
+
+> 💡 Looking for the CLI version? Switch to the `cli-legacy` branch.
+
+---
+
+## ✨ What's New in v2.0
+- 🖥️ GUI interface
+- 🔐 Secure password encryption using **Fernet**
+- 🖼️ Image preview and confirmation
+- 🧠 Error handling, key saving, and message validation
+
+---
+
+## 📦 Requirements
+
+Make sure Python is installed (>= 3.6), then install the dependencies:
+
 ```bash
-pip install opencv-python
+pip install opencv-python pillow cryptography
 ```
 
-## **How to Use**  
-### **1. Encoding a Message**
-1. Place an image (`your_image_file`) in the same directory as `stego.py`.  
-2. Run the script:  
-   ```bash
-   python stego.py
-   ```
-3. Enter your secret message when prompted.  
-4. Set a password for decryption.  
-5. The script will generate `encryptedImage.jpg` with the hidden message.  
+No external GUI libraries needed — **Tkinter** is built into standard Python.
 
-### **2. Decoding the Message**
-1. Run the script again:  
-   ```bash
-   python stego.py
-   ```
-2. Enter the correct password.  
-3. If correct, the hidden message will be revealed.  
+---
 
-## **Project Files**  
-- `stego.py` – Python script for encoding/decoding messages in an image.  
-- The original image (not included in the repo).  
-- `encryptedImage.jpg` – The image with the hidden message.   
+## 🛠️ How to Use the GUI
+
+### 🧬 Encoding a Message
+1. Run the app:
+   ```bash
+   python stegno_gui.py
+   ```
+2. Load an image (`.jpg`, `.png`, etc.) using the file picker.
+3. Type your secret message in the message box.
+4. Click **“Generate Key”** to create an encryption key.
+5. Click **“Encode”** – your message is embedded and saved as `secret_image.png`.
+
+### 🔍 Decoding a Message
+1. Run the app and load the `secret_image.png`.
+2. Paste the **same key** used to encode the message.
+3. Click **“Decode”** to reveal the hidden message.
+
+> 🧠 Make sure to save your encryption key! It is required for decryption.
+
+---
+
+## 📁 Project Files
+
+- `stegno_gui.py` – GUI app for encoding/decoding
+- `secret_image.png` – Output image with hidden message
+- `/assets/` – (Optional) GUI icons/templates
+- `README.md`, `CHANGELOG.md`
+
+---
+
+## 🕹️ Legacy CLI Version
+The original terminal-based version is available in the `cli-legacy` branch:
+- [View CLI Version](https://github.com/quadvecta/Stegno-Project/tree/cli-legacy)
+
+---
+
+## 📦 Releases
+- **Latest**: [v2.0 – GUI](https://github.com/quadvecta/Stegno-Project/releases)
+- **Previous**: [v1.0 – CLI](https://github.com/quadvecta/Stegno-Project/tree/cli-legacy)
+
+---
+
+## 🧾 License
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+Built with 💙 using Python + OpenCV + Tkinter
+```
