@@ -1,5 +1,5 @@
 
-# 🖼️ Image Steganography Project (v2.0 - GUI)
+# 🖼️ Image Steganography Project (v2.1 - GUI)
 
 [![Version](https://img.shields.io/badge/version-v2.1-blue.svg)](https://github.com/quadvecta/Stegno-Project/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -10,7 +10,7 @@ A Python GUI application to **hide and extract secret messages** within an image
 
 ---
 
-## ✨ What's New in v2.0
+## ✨ What's New in v2.1
 - 🖥️ GUI interface
 - 🔐 Secure password encryption using **Fernet**
 - 🖼️ Image preview and confirmation
