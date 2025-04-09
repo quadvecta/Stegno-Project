@@ -67,7 +67,7 @@ The original terminal-based version is available in the `cli-legacy` branch:
 ---
 
 ## 📦 Releases
-- **Latest**: [v2.0 – GUI](https://github.com/quadvecta/Stegno-Project/releases)
+- **Latest**: [v2.1 – GUI](https://github.com/quadvecta/Stegno-Project/tree/main)
 - **Previous**: [v1.0 – CLI](https://github.com/quadvecta/Stegno-Project/tree/cli-legacy)
 
 ---
