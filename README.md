@@ -78,4 +78,4 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 ---
 
 Built with 💙 using Python + OpenCV + Tkinter
-```
+
