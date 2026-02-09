@@ -55,7 +55,6 @@ No external GUI libraries needed — **Tkinter** is built into standard Python.
 
 - `stegno_gui.py` – GUI app for encoding/decoding
 - `secret_image.png` – Output image with hidden message
-- `/assets/` – (Optional) GUI icons/templates
 - `README.md`, `CHANGELOG.md`
 
 ---
