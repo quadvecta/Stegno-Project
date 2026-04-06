@@ -4,6 +4,10 @@
 [![Version](https://img.shields.io/badge/version-v2.1-blue.svg)](https://github.com/quadvecta/Stegno-Project/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
+# This project has numerous intentional bugs and easters. 
+## Any freshmen is welcome to debug and explore. HAPPY LEARNING!!
+
+
 A Python GUI application to **hide and extract secret messages** within an image using steganography and password protection. This upgraded version features an easy-to-use graphical interface built with Tkinter.
 
 > 💡 Looking for the CLI version? Switch to the `cli-legacy` branch.
