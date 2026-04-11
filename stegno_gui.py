@@ -10,10 +10,15 @@ class StegoApp:
     def __init__(self, master):
         self.master = master
         master.title("Steganography Suite v2.1")
+        
+       
+        master.update_idletasks()
+        
         self.create_help_menu()
         self.create_encrypt_ui()
         self.create_decrypt_ui()
 
+   
     def create_help_menu(self):
         menubar = Menu(self.master)
         help_menu = Menu(menubar, tearoff=0)
@@ -31,18 +36,64 @@ class StegoApp:
         """
         messagebox.showinfo("Help", help_text)
 
+    
+    def browse_encrypt_file(self):
+        # Ensure window is ready and bring to front
+        self.master.update()
+        self.master.lift()
+        self.master.focus_force()
+        
+        file_path = filedialog.askopenfilename(
+            parent=self.master,
+            title="Select Source Image",
+            initialdir=os.path.expanduser("~"),
+            filetypes=[
+                ("Image Files", "*.png *.jpg *.jpeg *.bmp"),
+                ("All Files", "*.*")
+            ]
+        )
+        
+        # Return focus to main window
+        self.master.lift()
+        
+        if file_path:
+            self.src_path.set(file_path)
+
+    def browse_decrypt_file(self):
+        # Ensure window is ready and bring to front
+        self.master.update()
+        self.master.lift()
+        self.master.focus_force()
+        
+        file_path = filedialog.askopenfilename(
+            parent=self.master,
+            title="Select Encrypted Image",
+            initialdir=os.path.expanduser("~"),
+            filetypes=[
+                ("Image Files", "*.png *.jpg *.jpeg *.bmp"),
+                ("All Files", "*.*")
+            ]
+        )
+        
+        # Return focus to main window
+        self.master.lift()
+        
+        if file_path:
+            self.encrypted_path.set(file_path)
+
+    
     def create_encrypt_ui(self):
         frame = ttk.Frame(self.master)
         frame.pack(padx=10, pady=10)
 
         # Image Selection
-        ttk.Label(frame, text="Source Image:").grid(row=0, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Source Image:").grid(row=0, column=0, padx=5, pady=5, sticky='w')
         self.src_path = tk.StringVar()
         ttk.Entry(frame, textvariable=self.src_path, width=40).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(frame, text="Browse", command=lambda: self.src_path.set(filedialog.askopenfilename())).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Button(frame, text="Browse", command=self.browse_encrypt_file).grid(row=0, column=2, padx=5, pady=5)
 
         # Secret Message
-        ttk.Label(frame, text="Secret Message:").grid(row=1, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Secret Message:").grid(row=1, column=0, padx=5, pady=5, sticky='nw')
         self.secret_msg = tk.Text(frame, height=5, width=40)
         self.secret_msg.grid(row=1, column=1, columnspan=2, padx=5, pady=5)
 
@@ -50,22 +101,23 @@ class StegoApp:
         ttk.Button(frame, text="Encrypt Message", command=self.encrypt).grid(row=2, column=1, pady=10)
 
         # Key Display
-        ttk.Label(frame, text="Decryption Key:").grid(row=3, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Decryption Key:").grid(row=3, column=0, padx=5, pady=5, sticky='w')
         self.key_var = tk.StringVar()
         ttk.Entry(frame, textvariable=self.key_var, state="readonly", width=40).grid(row=3, column=1, padx=5, pady=5)
 
+    
     def create_decrypt_ui(self):
         frame = ttk.Frame(self.master)
         frame.pack(padx=10, pady=10)
 
         # Encrypted Image Selection
-        ttk.Label(frame, text="Encrypted Image:").grid(row=0, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Encrypted Image:").grid(row=0, column=0, padx=5, pady=5, sticky='w')
         self.encrypted_path = tk.StringVar()
         ttk.Entry(frame, textvariable=self.encrypted_path, width=40).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(frame, text="Browse", command=lambda: self.encrypted_path.set(filedialog.askopenfilename())).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Button(frame, text="Browse", command=self.browse_decrypt_file).grid(row=0, column=2, padx=5, pady=5)
 
         # Decryption Key
-        ttk.Label(frame, text="Decryption Key:").grid(row=1, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Decryption Key:").grid(row=1, column=0, padx=5, pady=5, sticky='w')
         self.decrypt_key = tk.StringVar()
         ttk.Entry(frame, textvariable=self.decrypt_key, width=40).grid(row=1, column=1, padx=5, pady=5)
 
@@ -73,10 +125,11 @@ class StegoApp:
         ttk.Button(frame, text="Decrypt Message", command=self.decrypt).grid(row=2, column=1, pady=10)
 
         # Result Display
-        ttk.Label(frame, text="Decrypted Message:").grid(row=3, column=0, padx=5, pady=5)
+        ttk.Label(frame, text="Decrypted Message:").grid(row=3, column=0, padx=5, pady=5, sticky='w')
         self.result_var = tk.StringVar()
         ttk.Entry(frame, textvariable=self.result_var, state="readonly", width=40).grid(row=3, column=1, padx=5, pady=5)
 
+    
     def encrypt(self):
         img_path = self.src_path.get()
         msg = self.secret_msg.get("1.0", tk.END).strip()
@@ -127,6 +180,7 @@ class StegoApp:
         except Exception as e:
             messagebox.showerror("Error", f"Encryption failed: {str(e)}")
 
+   
     def decrypt(self):
         img_path = self.encrypted_path.get()
         key = self.decrypt_key.get()
@@ -169,11 +223,18 @@ class StegoApp:
             cipher = Fernet(key.encode())
             decrypted = cipher.decrypt(base64.b64decode(''.join(extracted))).decode()
             self.result_var.set(decrypted)
+            messagebox.showinfo("Success", "Message decrypted successfully!")
 
         except Exception as e:
             messagebox.showerror("Error", f"Decryption failed: {str(e)}")
 
+
 if __name__ == "__main__":
     root = tk.Tk()
+    
+    # Set window properties to ensure proper dialog behavior
+    root.attributes('-topmost', False)  # Don't force always-on-top
+    root.update_idletasks()  # Process pending events
+    
     app = StegoApp(root)
     root.mainloop()
