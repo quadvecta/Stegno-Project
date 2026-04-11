@@ -151,7 +151,7 @@ class StegoApp:
 
             # Encrypt and encode message
             encrypted = cipher.encrypt(msg.encode())
-            encoded = base64.b64encode(encrypted).decode()
+            encoded = encrypted.decode()
 
             # Add length header
             length = len(encoded).to_bytes(4, 'big')
@@ -221,7 +221,7 @@ class StegoApp:
                 z = (z + 1) % 3
 
             cipher = Fernet(key.encode())
-            decrypted = cipher.decrypt(base64.b64decode(''.join(extracted))).decode()
+            decrypted = cipher.decrypt(''.join(extracted).encode()).decode()
             self.result_var.set(decrypted)
             messagebox.showinfo("Success", "Message decrypted successfully!")
 
