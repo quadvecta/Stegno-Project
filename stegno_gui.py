@@ -2,167 +2,181 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, Menu
 import cv2
 import os
-import base64
 from cryptography.fernet import Fernet
-import numpy as np
+import platform
 
 class StegoApp:
     def __init__(self, master):
         self.master = master
         master.title("Steganography Suite v2.1")
-        
-       
-        master.update_idletasks()
-        
+
+        self.style = ttk.Style()
+        self.theme_var = tk.StringVar(value="System")
+
+        self.apply_theme(self.detect_system_theme())
+
+        self.create_menu()
         self.create_help_menu()
         self.create_encrypt_ui()
         self.create_decrypt_ui()
 
-   
-    def create_help_menu(self):
+    def detect_system_theme(self):
+        try:
+            if platform.system() == "Windows":
+                import winreg
+                registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+                key = winreg.OpenKey(registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
+                value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+                return "dark" if value == 0 else "light"
+        except:
+            pass
+        return "light"
+
+    def apply_theme(self, mode):
+        if mode == "dark":
+            self.style.theme_use('clam')
+            self.master.configure(bg="#1e1e1e")
+            self.style.configure(".", background="#1e1e1e", foreground="white", fieldbackground="#2b2b2b")
+            self.style.configure("TEntry", fieldbackground="#2b2b2b", foreground="white")
+            self.style.configure("TButton", background="#3a3a3a", foreground="white")
+            self.style.configure("TLabel", background="#1e1e1e", foreground="white")
+        elif mode == "light":
+            self.style.theme_use('default')
+            self.master.configure(bg="white")
+            self.style.configure(".", background="white", foreground="black")
+        elif mode == "blue":
+            self.style.theme_use('clam')
+            self.master.configure(bg="#0f172a")
+            self.style.configure(".", background="#0f172a", foreground="#e0f2fe", fieldbackground="#1e293b")
+        elif mode == "green":
+            self.style.theme_use('clam')
+            self.master.configure(bg="#022c22")
+            self.style.configure(".", background="#022c22", foreground="#d1fae5", fieldbackground="#064e3b")
+
+    def change_theme(self, choice):
+        if choice == "System":
+            mode = self.detect_system_theme()
+        elif choice == "Dark":
+            mode = "dark"
+        elif choice == "Light":
+            mode = "light"
+        elif choice == "Blue":
+            mode = "blue"
+        elif choice == "Green":
+            mode = "green"
+        self.apply_theme(mode)
+
+    def create_menu(self):
         menubar = Menu(self.master)
+
+        theme_menu = Menu(menubar, tearoff=0)
+        theme_menu.add_command(label="System", command=lambda: self.change_theme("System"))
+        theme_menu.add_command(label="Light", command=lambda: self.change_theme("Light"))
+        theme_menu.add_command(label="Dark", command=lambda: self.change_theme("Dark"))
+        theme_menu.add_command(label="Blue", command=lambda: self.change_theme("Blue"))
+        theme_menu.add_command(label="Green", command=lambda: self.change_theme("Green"))
+
+        menubar.add_cascade(label="Themes", menu=theme_menu)
+        self.master.config(menu=menubar)
+
+    def create_help_menu(self):
+        menubar = self.master.nametowidget(self.master.winfo_children()[0])
         help_menu = Menu(menubar, tearoff=0)
         help_menu.add_command(label="User Guide", command=self.show_help)
         menubar.add_cascade(label="Help", menu=help_menu)
-        self.master.config(menu=menubar)
 
     def show_help(self):
         help_text = """
-        Steganography Suite v2.1
-        ------------------------
-        1. Select an image for encryption/decryption.
-        2. Enter your secret message or decryption key.
-        3. Click 'Encrypt' or 'Decrypt' to process.
-        """
+Steganography Suite v2.1
+
+1. Select image
+2. Enter message or key
+3. Encrypt or decrypt
+"""
         messagebox.showinfo("Help", help_text)
 
-    
     def browse_encrypt_file(self):
-        # Ensure window is ready and bring to front
         self.master.update()
         self.master.lift()
         self.master.focus_force()
-        
-        file_path = filedialog.askopenfilename(
-            parent=self.master,
-            title="Select Source Image",
-            initialdir=os.path.expanduser("~"),
-            filetypes=[
-                ("Image Files", "*.png *.jpg *.jpeg *.bmp"),
-                ("All Files", "*.*")
-            ]
-        )
-        
-        # Return focus to main window
+        file_path = filedialog.askopenfilename(parent=self.master)
         self.master.lift()
-        
         if file_path:
             self.src_path.set(file_path)
 
     def browse_decrypt_file(self):
-        # Ensure window is ready and bring to front
         self.master.update()
         self.master.lift()
         self.master.focus_force()
-        
-        file_path = filedialog.askopenfilename(
-            parent=self.master,
-            title="Select Encrypted Image",
-            initialdir=os.path.expanduser("~"),
-            filetypes=[
-                ("Image Files", "*.png *.jpg *.jpeg *.bmp"),
-                ("All Files", "*.*")
-            ]
-        )
-        
-        # Return focus to main window
+        file_path = filedialog.askopenfilename(parent=self.master)
         self.master.lift()
-        
         if file_path:
             self.encrypted_path.set(file_path)
 
-    
     def create_encrypt_ui(self):
         frame = ttk.Frame(self.master)
         frame.pack(padx=10, pady=10)
 
-        # Image Selection
-        ttk.Label(frame, text="Source Image:").grid(row=0, column=0, padx=5, pady=5, sticky='w')
+        ttk.Label(frame, text="Source Image:").grid(row=0, column=0)
         self.src_path = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.src_path, width=40).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(frame, text="Browse", command=self.browse_encrypt_file).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.src_path, width=40).grid(row=0, column=1)
+        ttk.Button(frame, text="Browse", command=self.browse_encrypt_file).grid(row=0, column=2)
 
-        # Secret Message
-        ttk.Label(frame, text="Secret Message:").grid(row=1, column=0, padx=5, pady=5, sticky='nw')
+        ttk.Label(frame, text="Secret Message:").grid(row=1, column=0)
         self.secret_msg = tk.Text(frame, height=5, width=40)
-        self.secret_msg.grid(row=1, column=1, columnspan=2, padx=5, pady=5)
+        self.secret_msg.grid(row=1, column=1, columnspan=2)
 
-        # Encryption Button
-        ttk.Button(frame, text="Encrypt Message", command=self.encrypt).grid(row=2, column=1, pady=10)
+        ttk.Button(frame, text="Encrypt Message", command=self.encrypt).grid(row=2, column=1)
 
-        # Key Display
-        ttk.Label(frame, text="Decryption Key:").grid(row=3, column=0, padx=5, pady=5, sticky='w')
+        ttk.Label(frame, text="Decryption Key:").grid(row=3, column=0)
         self.key_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.key_var, state="readonly", width=40).grid(row=3, column=1, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.key_var, state="readonly", width=40).grid(row=3, column=1)
 
-    
     def create_decrypt_ui(self):
         frame = ttk.Frame(self.master)
         frame.pack(padx=10, pady=10)
 
-        # Encrypted Image Selection
-        ttk.Label(frame, text="Encrypted Image:").grid(row=0, column=0, padx=5, pady=5, sticky='w')
+        ttk.Label(frame, text="Encrypted Image:").grid(row=0, column=0)
         self.encrypted_path = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.encrypted_path, width=40).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(frame, text="Browse", command=self.browse_decrypt_file).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.encrypted_path, width=40).grid(row=0, column=1)
+        ttk.Button(frame, text="Browse", command=self.browse_decrypt_file).grid(row=0, column=2)
 
-        # Decryption Key
-        ttk.Label(frame, text="Decryption Key:").grid(row=1, column=0, padx=5, pady=5, sticky='w')
+        ttk.Label(frame, text="Decryption Key:").grid(row=1, column=0)
         self.decrypt_key = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.decrypt_key, width=40).grid(row=1, column=1, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.decrypt_key, width=40).grid(row=1, column=1)
 
-        # Decryption Button
-        ttk.Button(frame, text="Decrypt Message", command=self.decrypt).grid(row=2, column=1, pady=10)
+        ttk.Button(frame, text="Decrypt Message", command=self.decrypt).grid(row=2, column=1)
 
-        # Result Display
-        ttk.Label(frame, text="Decrypted Message:").grid(row=3, column=0, padx=5, pady=5, sticky='w')
+        ttk.Label(frame, text="Decrypted Message:").grid(row=3, column=0)
         self.result_var = tk.StringVar()
-        ttk.Entry(frame, textvariable=self.result_var, state="readonly", width=40).grid(row=3, column=1, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.result_var, state="readonly", width=40).grid(row=3, column=1)
 
-    
     def encrypt(self):
         img_path = self.src_path.get()
         msg = self.secret_msg.get("1.0", tk.END).strip()
 
         if not img_path:
-            messagebox.showerror("Error", "Please select an image file.")
+            messagebox.showerror("Error", "Select image")
             return
         if not msg:
-            messagebox.showerror("Error", "Please enter a secret message.")
+            messagebox.showerror("Error", "Enter message")
             return
 
         try:
             img = cv2.imread(img_path)
-            if img is None:
-                raise ValueError("Unsupported image format or corrupted file.")
-
             key = Fernet.generate_key()
             cipher = Fernet(key)
 
-            # Encrypt and encode message
             encrypted = cipher.encrypt(msg.encode())
             encoded = encrypted.decode()
 
-            # Add length header
             length = len(encoded).to_bytes(4, 'big')
             full_msg = ''.join([chr(b) for b in length]) + encoded
 
-            # Check capacity
             if len(full_msg) > img.shape[0] * img.shape[1]:
-                messagebox.showerror("Error", "Message too large for selected image.")
+                messagebox.showerror("Error", "Too large")
                 return
 
-            # Embed message
             n, m, z = 0, 0, 0
             for char in full_msg:
                 img[n, m, z] = ord(char)
@@ -172,32 +186,24 @@ class StegoApp:
                     n += 1
                 z = (z + 1) % 3
 
-            # Save as PNG
             cv2.imwrite("secret_image.png", img)
             self.key_var.set(key.decode())
-            messagebox.showinfo("Success", "Message encrypted and saved as secret_image.png")
+            messagebox.showinfo("Success", "Encrypted")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Encryption failed: {str(e)}")
+            messagebox.showerror("Error", str(e))
 
-   
     def decrypt(self):
         img_path = self.encrypted_path.get()
         key = self.decrypt_key.get()
 
-        if not img_path:
-            messagebox.showerror("Error", "Please select an encrypted image.")
-            return
-        if not key:
-            messagebox.showerror("Error", "Please enter the decryption key.")
+        if not img_path or not key:
+            messagebox.showerror("Error", "Missing input")
             return
 
         try:
             img = cv2.imread(img_path)
-            if img is None:
-                raise ValueError("Unsupported image format or corrupted file.")
 
-            # Extract length header
             n, m, z = 0, 0, 0
             length_chars = []
             for _ in range(4):
@@ -210,7 +216,6 @@ class StegoApp:
 
             length = int.from_bytes(bytes([ord(c) for c in length_chars]), 'big')
 
-            # Extract message
             extracted = []
             for _ in range(length):
                 extracted.append(chr(img[n, m, z]))
@@ -223,18 +228,13 @@ class StegoApp:
             cipher = Fernet(key.encode())
             decrypted = cipher.decrypt(''.join(extracted).encode()).decode()
             self.result_var.set(decrypted)
-            messagebox.showinfo("Success", "Message decrypted successfully!")
+            messagebox.showinfo("Success", "Decrypted")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Decryption failed: {str(e)}")
+            messagebox.showerror("Error", str(e))
 
 
 if __name__ == "__main__":
     root = tk.Tk()
-    
-    # Set window properties to ensure proper dialog behavior
-    root.attributes('-topmost', False)  # Don't force always-on-top
-    root.update_idletasks()  # Process pending events
-    
     app = StegoApp(root)
     root.mainloop()
