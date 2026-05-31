@@ -19,7 +19,7 @@ A Python GUI application to **hide and extract secret messages** within an image
 - 🔐 Secure password encryption using **Fernet**
 - 🖼️ Image preview and confirmation
 - 🧠 Error handling, key saving, and message validation
-
+- *Note:* With new features, there are plenty of bugs to work on. Keep a keen eye on the functioning and behaviour of the program
 ---
 
 ## 📦 Requirements
